@@ -1,13 +1,11 @@
-// src/components/Generator.js
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
 const Generator = ({ onDataGenerated, numChannels }) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [intervalSeconds, setIntervalSeconds] = useState(1);
   const [numberRange, setNumberRange] = useState(10);
 
-  const generateRandomNumber = () =>
-    Math.floor(Math.random() * (numberRange + 1));
+  const generateRandomNumber = () => Math.floor(Math.random() * (numberRange + 1));
 
   const startGenerator = () => {
     setIsGenerating(true);
@@ -35,13 +33,7 @@ const Generator = ({ onDataGenerated, numChannels }) => {
     return () => {
       clearInterval(intervalId);
     };
-  }, [
-    isGenerating,
-    onDataGenerated,
-    intervalSeconds,
-    numberRange,
-    numChannels,
-  ]);
+  }, [isGenerating, onDataGenerated, intervalSeconds, numberRange, numChannels]);
 
   return (
     <div className="flex flex-col">
@@ -55,7 +47,6 @@ const Generator = ({ onDataGenerated, numChannels }) => {
             type="number"
             value={intervalSeconds}
             onChange={(e) => setIntervalSeconds(parseInt(e.target.value, 10))}
-            disabled={isGenerating}
           />
         </label>
         <label>
@@ -64,11 +55,10 @@ const Generator = ({ onDataGenerated, numChannels }) => {
             type="number"
             value={numberRange}
             onChange={(e) => setNumberRange(parseInt(e.target.value, 10))}
-            disabled={isGenerating}
           />
         </label>
       </div>
-      <div className="flex justify-evenly">
+      <div className="flex justify-evenly m-2">
         <button onClick={startGenerator} disabled={isGenerating} className="border-solid text-base border-2 rounded-2xl border-indigo-600 p-2 text-white bg-slate-700">
           Start
         </button>

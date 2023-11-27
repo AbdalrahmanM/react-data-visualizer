@@ -1,22 +1,67 @@
-import React from 'react';
-const BarChart = ({ data }) => {
+import React, { useEffect, useRef } from 'react';
+import Chart from 'chart.js/auto';
+
+const CHART_COLORS = {
+  EVEN: '#3498db',
+  ODD: '#e74c3c',
+};
+
+const BAR_WIDTH = 50;
+const BAR_MARGIN = 10;
+
+const BarChart = ({ data, numChannels }) => {
+  const chartRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = chartRef.current.getContext('2d');
+
+    const datasets = Array.from({ length: numChannels }, (_, i) => ({
+      label: `Channel ${i + 1}`,
+      backgroundColor: i % 2 === 0 ? CHART_COLORS.EVEN : CHART_COLORS.ODD,
+      borderColor: 'white',
+      borderWidth: 2,
+      data: data.map((item) => item[`channel${i + 1}`]),
+    }));
+
+    const chartData = {
+      labels: Array.from({ length: data.length }, (_, i) => `Bar ${i + 1}`),
+      datasets,
+    };
+
+    const options = {
+      scales: {
+        x: {
+          beginAtZero: true,
+        },
+        y: {
+          beginAtZero: true,
+          max: 10, 
+        },
+      },
+    };
+
+    let chartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: chartData,
+      options: options,
+    });
+
+    return () => {
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+    };
+  }, [data, numChannels]);
+
   return (
-    <div>
+    <div style={{ height: '100%', width: '100%', overflow: 'auto' }}>
       <h2 className='text-2xl font-semibold mb-4'>Bar Chart</h2>
-      <div className='flex flex-end overflow-x-auto whitespace-nowrap'>
-        {data.map((item, index) => (
-          <div
-            key={index}
-            className='relative text-red-500 bg-blue-600 w-[50px] mr-[10px] text-center inline-flex mb-4'
-            style={{
-                height: `${(item.channel1 + item.channel2) * 10}px`,
-                backgroundColor: index % 2 === 0 ? '#3498db' : '#e74c3c',
-            }}
-          >
-            <span className='absolute transform rotate-90 mt-4 text-black font-semibold'>{`Bar ${index + 1}`}</span>
-          </div>
-        ))}
-      </div>
+      <canvas
+        ref={chartRef}
+        width={BAR_WIDTH * data.length + BAR_MARGIN * (data.length - 1)}
+        height={300} 
+        style={{ width: '100%' }}
+      />
     </div>
   );
 };
